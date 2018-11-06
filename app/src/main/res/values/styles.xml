@@ -1,0 +1,36 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorPrimary">@color/colorBackGround</item>
+        <item name="colorPrimaryDark">@color/colorBackGround</item>
+        <item name="colorAccent">@color/colorAppGreen</item>
+        <item name="android:background">@color/colorBackGround</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <!--タイトルバーを狭くします-->
+        <item name="android:actionBarSize">40dp</item>
+    </style>
+
+    <style name="AppTheme.MyAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:background">@color/colorBackGround</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <!--タイトルバーを狭くします-->
+        <item name="android:actionBarSize">40dp</item>
+    </style>
+
+    <style name="SwitchButton">
+        <!-- 有効化したときの色 -->
+        <item name="colorControlActivated">@color/colorAppGreen</item>
+        <item name="colorSwitchThumbNormal">@color/colorWhite</item>
+        <item name="android:colorForeground">@color/colorBackDisable</item>
+    </style>
+
+    <!-- TimePicker -->
+    <style name="TimePicker">
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+        <item name="android:textColorSecondary">@color/colorBackDisable</item>
+    </style>
+
+</resources>

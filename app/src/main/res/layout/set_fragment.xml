@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/timerSetFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TimePicker
+        android:id="@+id/timePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/TimePicker"
+        android:timePickerMode="spinner"/>
+
+    <LinearLayout
+        android:id="@+id/chooseDay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/timePicker">
+
+        <ToggleButton
+            android:id="@+id/select_sunday"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:textOn="@string/sunday"
+            android:textOff="@string/sunday"
+            android:background="@drawable/day_frame"
+            android:layout_margin="3dp"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toRightOf="parent"/>
+
+        <ToggleButton
+            android:id="@+id/select_monday"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:textOn="@string/monday"
+            android:textOff="@string/monday"
+            android:background="@drawable/day_frame"
+            android:layout_margin="3dp"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toLeftOf="@+id/select_sunday"/>
+
+        <ToggleButton
+            android:id="@+id/select_tuesday"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:textOn="@string/tuesday"
+            android:textOff="@string/tuesday"
+            android:background="@drawable/day_frame"
+            android:layout_margin="3dp"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toRightOf="@+id/select_monday"/>
+
+        <ToggleButton
+            android:id="@+id/select_wednesday"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:textOn="@string/wednesday"
+            android:textOff="@string/wednesday"
+            android:background="@drawable/day_frame"
+            android:layout_margin="3dp"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toLeftOf="@+id/select_tuesday"/>
+
+        <ToggleButton
+            android:id="@+id/select_thursday"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:textOn="@string/thursday"
+            android:textOff="@string/thursday"
+            android:background="@drawable/day_frame"
+            android:layout_margin="3dp"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toRightOf="@+id/select_wednesday"/>
+
+        <ToggleButton
+            android:id="@+id/select_friday"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:textOn="@string/friday"
+            android:textOff="@string/friday"
+            android:background="@drawable/day_frame"
+            android:layout_margin="3dp"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toRightOf="@+id/select_thursday"/>
+
+        <ToggleButton
+            android:id="@+id/select_saturday"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_margin="3dp"
+            android:background="@drawable/day_frame"
+            android:checked="false"
+            android:textOff="@string/saturday"
+            android:textOn="@string/saturday"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toLeftOf="@+id/select_friday" />
+
+    </LinearLayout>
+
+    <!-- 区切り線 -->
+    <View
+        android:id="@+id/divider_1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBackDisable"
+        android:layout_marginTop="@dimen/labelMargin"
+        app:layout_constraintTop_toBottomOf="@id/chooseDay"/>
+
+    <TextView
+        android:id="@+id/labelSnooze"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/snooze"
+        android:layout_marginTop="@dimen/labelMargin"
+        android:paddingLeft="@dimen/labelLeft"
+        app:layout_constraintTop_toBottomOf="@id/divider_1"/>
+
+    <TextView
+        android:id="@+id/txtYajirusi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/yajirusi"
+        android:layout_marginTop="@dimen/labelMargin"
+        android:paddingLeft="@dimen/labelLeft"
+        app:layout_constraintLeft_toRightOf="@id/labelSnooze"
+        app:layout_constraintTop_toBottomOf="@id/divider_1"/>
+
+    <TextView
+        android:id="@+id/txtSnoozeTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="** m"
+        android:layout_marginTop="@dimen/labelMargin"
+        android:paddingLeft="@dimen/labelLeft"
+        app:layout_constraintLeft_toRightOf="@id/txtYajirusi"
+        app:layout_constraintTop_toBottomOf="@id/divider_1"/>
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/snoozeSwitch"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="@dimen/labelLeft"
+        android:theme="@style/SwitchButton"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider_1" />
+
+    <!-- 区切り線 -->
+    <View
+        android:id="@+id/divider_2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBackDisable"
+        android:layout_marginTop="@dimen/labelMargin"
+        app:layout_constraintTop_toBottomOf="@id/labelSnooze"/>
+
+    <TextView
+        android:id="@+id/labelSound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sound"
+        android:layout_marginTop="@dimen/labelMargin"
+        android:paddingLeft="@dimen/labelLeft"
+        app:layout_constraintTop_toBottomOf="@id/divider_2"/>
+
+    <TextView
+        android:id="@+id/txtSound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sound Name"
+        android:paddingTop="@dimen/labelMargin"
+        android:paddingBottom="@dimen/labelMargin"
+        android:paddingLeft="@dimen/labelLeft"
+        android:paddingRight="@dimen/labelLeft"
+        app:layout_constraintTop_toBottomOf="@id/divider_2"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <!-- 区切り線 -->
+    <View
+        android:id="@+id/divider_3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBackDisable"
+        android:layout_marginTop="@dimen/labelMargin"
+        app:layout_constraintTop_toBottomOf="@id/labelSound"/>
+
+    <Button
+        android:id="@+id/btnSetAlarm"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:text="@string/set_alarm"
+        android:textSize="30sp"
+        android:textColor="@color/colorWhite"
+        android:background="@drawable/frame_style"
+        android:layout_margin="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+
+</android.support.constraint.ConstraintLayout>

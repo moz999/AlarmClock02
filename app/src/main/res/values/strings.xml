@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">AlarmClock02</string>
+
+    <!--ボタン用-->
+    <string name="set_start">+</string>
+    <string name="set_alarm">✔︎</string>
+
+    <!--曜日-->
+    <string name="sunday">Sun</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+
+    <!--セット画面ラベル-->
+    <string name="snooze">Snooze</string>
+    <string name="sound">Sound</string>
+    <string name="yajirusi">>>></string>
+
+</resources>

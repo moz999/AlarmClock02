@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--セット画面-->
+    <dimen name="txtDaySize">15sp</dimen>
+    <dimen name="dayPadding">5dp</dimen>
+    <dimen name="dayPadding_2">10dp</dimen>
+    <dimen name="labelMargin">15dp</dimen>
+    <dimen name="labelLeft">30dp</dimen>
+
+    <!--リスト-->
+    <dimen name="marginLeft">20dp</dimen>
+    <dimen name="paddingTop">5dp</dimen>
+    <dimen name="dayPaddingLeft">10dp</dimen>
+
+    <!--文字の大きさ-->
+    <dimen name="txtTime">40sp</dimen>
+
+</resources>
