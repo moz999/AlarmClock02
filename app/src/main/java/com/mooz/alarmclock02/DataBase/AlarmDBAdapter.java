@@ -63,8 +63,8 @@ public class AlarmDBAdapter {
      * @param saturday
      */
     public void saveDB(int enable, int hour, int minute, int snooze, int snoozeTime, String sound,
-                       int sunday, int monday, int tuesday, int wednesday, int thursday,
-                       int friday, int saturday){
+                       String soundUrl, int sunday, int monday, int tuesday, int wednesday,
+                       int thursday, int friday, int saturday){
         //トランザクション開始
         db.beginTransaction();
 
@@ -77,6 +77,7 @@ public class AlarmDBAdapter {
             values.put(DBHelper.COL_SNOOZE, snooze);
             values.put(DBHelper.COL_SNZTIME, snoozeTime);
             values.put(DBHelper.COL_SOUND, sound);
+            values.put(DBHelper.COL_SOUND_URI, soundUrl);
             values.put(DBHelper.COL_SUNDAY, sunday);
             values.put(DBHelper.COL_MONDAY, monday);
             values.put(DBHelper.COL_TUESDAY, tuesday);

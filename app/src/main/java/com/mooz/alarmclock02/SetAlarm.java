@@ -2,13 +2,23 @@ package com.mooz.alarmclock02;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -17,7 +27,15 @@ import android.widget.ToggleButton;
 import com.mooz.alarmclock02.DataBase.AlarmDBAdapter;
 import com.mooz.alarmclock02.DataBase.AlarmTableHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SetAlarm extends Activity {
+
+    //Context
+    Context mContext;
+    //Activity
+    Activity mActivity;
 
     //SQL
     AlarmDBAdapter db;
@@ -43,6 +61,7 @@ public class SetAlarm extends Activity {
     private int mSnooze;
     private int mSnoozeTime;
     private String mSound;
+    private String mSoundUrl;
     private int mSunday;
     private int mMonday;
     private int mTuesday;
@@ -51,6 +70,15 @@ public class SetAlarm extends Activity {
     private int mFriday;
     private int mSaturday;
 
+    //ダイアログ用
+    final String[] mChoiceTime = {"1分","2分","3分","4分","5分","6分","7分","8分","9分","10分"};
+    DialogInterface.OnClickListener mItemListener;
+    DialogInterface.OnClickListener mButtonListener;
+
+    //Sound list
+    ArrayList<String> soundList;
+    ArrayList<String> soundSource;
+    final Ringtone[] mRingtone = new Ringtone[1];
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -58,6 +86,11 @@ public class SetAlarm extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.set_fragment);
 
+        //Get the Application Context
+        mContext = getApplicationContext();
+        mActivity = SetAlarm.this;
+
+        //Find my parts on my Activity Graphic
         findViews();
 
         //TimePickerは24時間表示
@@ -75,6 +108,22 @@ public class SetAlarm extends Activity {
                 else{
                     Log.d("AlarmClock02", "スヌーズスイッチを OFF にしました");
                 }
+            }
+        });
+
+        //スヌーズ用テキストをクリックしたとき
+        txtSnoozeTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choiceSnoozeTime(mActivity, mContext);
+            }
+        });
+
+        //Touch the sound name
+        txtSound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choiceSound(mActivity, mContext);
             }
         });
 
@@ -107,6 +156,107 @@ public class SetAlarm extends Activity {
         snoozeSwitch = findViewById(R.id.snoozeSwitch);
         txtSound = findViewById(R.id.txtSound);
         btnSetAlarm = findViewById(R.id.btnSetAlarm);
+    }
+
+    /**
+     * スヌーズタイムを設定するダイアログを表示
+     * @param activity
+     * @param context
+     */
+    private void choiceSnoozeTime(Activity activity, Context context){
+        //Selected snooze time
+        final String[] selectTime = new String[1];
+        //initializing a new alert dialog
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        //Set the alert dialog title
+        builder.setTitle("Select Snooze time");
+
+        //initializing a new array adapter instance
+        ArrayAdapter arrayAdapter = new ArrayAdapter<String>(
+                mContext, //context
+                R.layout.snooze_time_list, // Layout
+                mChoiceTime //List
+                );
+
+        builder.setSingleChoiceItems(arrayAdapter, -1,
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, final int which) {
+                // Get the alert dialog selected item
+                Log.d("Alarm Clock 02 : ", "You checked the " + (which + 1) + " minutes.");
+                selectTime[0] = String.valueOf(which + 1) + " 分";
+                txtSnoozeTime.setText(selectTime[0]);
+
+                dialog.dismiss();
+            }
+        });
+
+        //Create the alert dialog
+        AlertDialog dialog = builder.create();
+        //Display the alert dialog
+        dialog.show();
+    }
+
+    /**
+     * Choice the alarm sound.
+     * @param activity
+     * @param context
+     */
+    private void choiceSound(Activity activity, final Context context){
+        final RingtoneManager ringtoneManager = new RingtoneManager(context);
+        final Uri uri = ringtoneManager.getRingtoneUri(ringtoneManager.TYPE_ALARM);
+        Cursor cursor = ringtoneManager.getCursor();
+        soundList = new ArrayList<>();
+        soundSource = new ArrayList<>();
+
+        while(cursor.moveToNext()){
+            Log.d("Alarm Clock 02 : ", "Ringtone is " + cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
+            soundList.add(cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
+        }
+
+        //Set up alert dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        //Set title to dialog window
+        builder.setTitle("Select the sound");
+        //Initializing a new array adapter instance
+        ArrayAdapter arrayAdapter = new ArrayAdapter<String>(
+                mContext,
+                R.layout.snooze_time_list,  // Recycled layout
+                soundList );    //List
+
+        //Select a alarm sound from sound name list.
+        builder.setSingleChoiceItems(arrayAdapter, -1,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Sound a music when click a list item
+                        mRingtone[0] = ringtoneManager.getRingtone(which);
+                        mRingtone[0].play();
+                    }
+                });
+
+        //When you pushed a OK button
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String soundName = mRingtone[0].getTitle(mContext);
+                txtSound.setText(soundName);
+                dialog.dismiss();
+                mRingtone[0].stop();
+            }
+        });
+
+        //When you pushed a Cancel button
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                mRingtone[0].stop();
+            }
+        });
+
+        // Create a dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     /**
@@ -164,11 +314,13 @@ public class SetAlarm extends Activity {
         }
         //音声タイトルを取得
         mSound = txtSound.getText().toString();
+        //get sound url type string
+        mSoundUrl = "0";
 
 
         //データベースに書き込み
         db.openDB();
-        db.saveDB(mEnable,mHour,mMinute,mSnooze,mSnoozeTime,mSound,
+        db.saveDB(mEnable,mHour,mMinute,mSnooze,mSnoozeTime,mSound, mSoundUrl,
                 mSunday,mMonday,mTuesday,mWednesday,mThursday,mFriday,mSaturday);
         db.closeDB();
     }

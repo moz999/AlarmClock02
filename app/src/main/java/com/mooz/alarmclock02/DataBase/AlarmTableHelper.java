@@ -17,6 +17,7 @@ public class AlarmTableHelper extends SQLiteOpenHelper{
     public static final String COL_SNOOZE = "snooze";
     public static final String COL_SNZTIME = "snoozeTime";
     public static final String COL_SOUND = "sound";
+    public static final String COL_SOUND_URI = "url";
     public static final String COL_SUNDAY = "sunday";
     public static final String COL_MONDAY = "monday";
     public static final String COL_TUESDAY = "tuesday";
@@ -43,6 +44,7 @@ public class AlarmTableHelper extends SQLiteOpenHelper{
                 + COL_SNOOZE + " INTEGER NOT NULL,"
                 + COL_SNZTIME + " INTEGER,"
                 + COL_SOUND + " TEXT NOT NULL,"
+                + COL_SOUND_URI + " TEXT NOT NULL,"
                 + COL_SUNDAY + " INTEGER NOT NULL,"
                 + COL_MONDAY + " INTEGER NOT NULL,"
                 + COL_TUESDAY + " INTEGER NOT NULL,"

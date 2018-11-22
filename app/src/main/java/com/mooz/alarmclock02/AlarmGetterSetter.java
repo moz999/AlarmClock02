@@ -9,6 +9,7 @@ public class AlarmGetterSetter {
     private int snooze;
     private int snoozeTime;
     private String sound;
+    private String soundUrl;
     private int sunday;
     private int monday;
     private int tuesday;
@@ -17,7 +18,7 @@ public class AlarmGetterSetter {
     private int friday;
     private int saturday;
 
-    public AlarmGetterSetter(int id, int enable, int hour, int minute, int snooze, int snoozeTime, String sound,
+    public AlarmGetterSetter(int id, int enable, int hour, int minute, int snooze, int snoozeTime, String sound, String soundUrl,
                              int sunday, int monday, int tuesday, int wednesday, int thursday, int friday, int saturday) {
         this.id = id;
         this.enable = enable;
@@ -26,6 +27,7 @@ public class AlarmGetterSetter {
         this.snooze = snooze;
         this.snoozeTime = snoozeTime;
         this.sound = sound;
+        this.soundUrl = soundUrl;
         this.sunday = sunday;
         this.monday = monday;
         this.tuesday = tuesday;
@@ -89,6 +91,14 @@ public class AlarmGetterSetter {
 
     public void setSound(String sound) {
         this.sound = sound;
+    }
+
+    public String getSoundUrl() {
+        return soundUrl;
+    }
+
+    public void setSoundUrl(String soundUrl) {
+        this.soundUrl = soundUrl;
     }
 
     public int getSunday() {

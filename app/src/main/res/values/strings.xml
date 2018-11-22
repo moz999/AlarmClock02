@@ -18,5 +18,6 @@
     <string name="snooze">Snooze</string>
     <string name="sound">Sound</string>
     <string name="yajirusi">>>></string>
+    <string name="initSnoozeTime">Click me</string>
 
 </resources>

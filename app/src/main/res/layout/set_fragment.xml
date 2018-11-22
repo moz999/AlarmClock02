@@ -134,7 +134,7 @@
         android:id="@+id/txtSnoozeTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="** m"
+        android:text="@string/initSnoozeTime"
         android:layout_marginTop="@dimen/labelMargin"
         android:paddingLeft="@dimen/labelLeft"
         app:layout_constraintLeft_toRightOf="@id/txtYajirusi"

@@ -15,5 +15,6 @@
 
     <!--文字の大きさ-->
     <dimen name="txtTime">40sp</dimen>
+    <dimen name="txtDialog">5sp</dimen>
 
 </resources>
