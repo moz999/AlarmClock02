@@ -1,16 +1,29 @@
 package com.mooz.alarmclock02;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import com.mooz.alarmclock02.DataBase.AlarmDBAdapter;
 
@@ -21,6 +34,7 @@ public class AlarmFragment extends Fragment implements OnRecyclerListener {
     private Context mContext = null;
     private View mView;
     private RecyclerFragmentListener mFragmentListener = null;
+    private CardView cardViewList;
 
     //RecyclerViewとAdapter
     private RecyclerView mRecyclerView = null;
@@ -75,17 +89,59 @@ public class AlarmFragment extends Fragment implements OnRecyclerListener {
         //レイアウトマネージャを設定
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        //Adapterをセットする
-        mAdapter = new RecyclerAdapter(mContext, items, this);
-        mRecyclerView.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged(); //更新する
-
         //区切り線をセットする
         DividerItemDecoration itemDecoration = new
                 DividerItemDecoration(mContext, new LinearLayoutManager(mContext).getOrientation());
         mRecyclerView.addItemDecoration(itemDecoration);
         //区切り線の色を変更する
         itemDecoration.setDrawable(ContextCompat.getDrawable(mContext,R.drawable.divider));
+
+        //Adapterをセットする
+        mAdapter = new RecyclerAdapter(mContext, items, this);
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged(); //更新する
+
+        // Item click ( Long ) on list item
+        mAdapter.setOnItemLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d("Alarm Clock 02", String.valueOf(items.get(v.getId())));
+                final int position = v.getId();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext, R.style.MyAlertDialog);
+                builder.setTitle("Delete");
+                builder.setMessage("Would you like to delete it ?");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //get ID
+                        String listId = String.valueOf(listItem.getId());
+
+                        dbAdapter = new AlarmDBAdapter(mContext);
+                        dbAdapter.openDB();
+                        dbAdapter.selectDelete(listId);
+                        dbAdapter.closeDB();
+
+                        items.clear();
+                        loadMyList();
+                        mAdapter.notifyItemRemoved(position);
+                    }
+                });
+
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                //Create dialog
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                return false;
+            }
+        });
 
         return mView;
     }
@@ -108,7 +164,7 @@ public class AlarmFragment extends Fragment implements OnRecyclerListener {
     /**
      * DataBaseから値を取得してカプセル化
      */
-    private void loadMyList(){
+    public void loadMyList(){
         //DBに接続
         dbAdapter = new AlarmDBAdapter(mContext);
         dbAdapter.openDB();

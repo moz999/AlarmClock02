@@ -1,16 +1,27 @@
 package com.mooz.alarmclock02;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.mooz.alarmclock02.DataBase.AlarmDBAdapter;
+
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
 
@@ -22,8 +33,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     private LayoutInflater mInflater;
     private ArrayList<AlarmGetterSetter> mData;
     private AlarmGetterSetter listItem;
+    private AlarmGetterSetter listEnable;
     private Context mContext;
     private OnRecyclerListener mListener;
+
+    private AlarmDBAdapter dbAdapter;
+    private AlarmFragment alarmFragment;
+    private View.OnLongClickListener listener;
 
     /**
      * コンストラクタ
@@ -54,10 +70,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         //データを取得
         listItem = mData.get(position);
 
+        //String for time
+        String mHour;
+        String mMinute;
+
         //データ表示
         if(mData != null && mData.size() > position && mData.get(position) != null){
-            viewHolder.pTxtHour.setText(toString().valueOf(listItem.getHour()));
-            viewHolder.pTxtMinute.setText(toString().valueOf(listItem.getMinute()));
+            mHour = String.format(Locale.JAPAN, "%02d", listItem.getHour());    //Format time "0" -> "00"
+            mMinute = String.format(Locale.JAPAN, "%02d", listItem.getMinute());
+            viewHolder.pTxtHour.setText(mHour);
+            viewHolder.pTxtMinute.setText(mMinute);
 
             if(listItem.getSunday() == lDisable){
                 viewHolder.pTxtSunday.setTextColor(Color.parseColor(disColor));
@@ -100,6 +122,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             }else{
                 viewHolder.pTxtSaturday.setTextColor(Color.parseColor(enaColor));
             }
+
+            viewHolder.pTxtSoundName.setText(listItem.getSound());
+
+            //Check enable switch is OFF or ON
+            if(listItem.getEnable() == lEnable){
+                viewHolder.pEnable.setChecked(true);
+            }if(listItem.getEnable() == lDisable){
+                viewHolder.pEnable.setChecked(false);
+            }
         }
 
         //クリック処理
@@ -108,6 +139,50 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             public void onClick(View v){
                 mListener.onRecyclerClicked(v, position);
             }});
+
+        viewHolder.itemView.setId(viewHolder.getAdapterPosition());
+        //Long click listener
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View v) {
+                listener.onLongClick(v);
+                return false;
+            }
+        });
+
+        //Enable Switch button is swiped!
+        listEnable = mData.get(position);
+        final int enableId = listEnable.getId();
+        viewHolder.pEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.d("AlarmClock02", "listItem number is " + String.valueOf(listItem.getId()) + " is Clicked!!!!!!");
+                Log.d("AlarmClock02", "enableId number is " + String.valueOf(enableId) + " is Clicked!!!!!!");
+
+                dbAdapter = new AlarmDBAdapter(mContext);
+
+                if(isChecked){
+                    dbAdapter.openDB();
+                    dbAdapter.updateEnable(String.valueOf(enableId), "1");
+                    dbAdapter.closeDB();
+                }else{
+                    dbAdapter.openDB();
+                    dbAdapter.updateEnable(String.valueOf(enableId),"0");
+                    dbAdapter.closeDB();
+                }
+            }
+        });
+
+        //margin is given to the last position
+        int lastLine = getItemCount() - 1;
+        if (position == lastLine){
+            Log.d("AlarmClock02",lastLine + " is last position");
+            ViewGroup.LayoutParams lp = viewHolder.pCardView.getLayoutParams();
+            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)lp;
+            mlp.setMargins(mlp.leftMargin, mlp.topMargin, mlp.rightMargin, 300);
+            viewHolder.pCardView.setLayoutParams(mlp);
+        }
+
     }
 
     @Override
@@ -119,6 +194,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             return 0;
         }
     }
+
+    /**
+     *
+     * @param listener
+     */
+    public void setOnItemLongClickListener(View.OnLongClickListener listener){
+        this.listener = listener;
+    }
+
+
     //===========================================================================================
 
     /**
@@ -138,6 +223,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public TextView pTxtFriday;
         public TextView pTxtSaturday;
         public TextView pTxtSoundName;
+        public CardView pCardView;
 
         public ViewHolder(View itemView){
             super(itemView);
@@ -153,6 +239,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             pTxtFriday = itemView.findViewById(R.id.txtFriday);
             pTxtSaturday = itemView.findViewById(R.id.txtSaturday);
             pTxtSoundName= itemView.findViewById(R.id.soundName);
+            pCardView = itemView.findViewById(R.id.cardViewItem);
         }
     }
 }

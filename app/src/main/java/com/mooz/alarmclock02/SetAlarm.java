@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.mooz.alarmclock02.DataBase.AlarmDBAdapter;
@@ -78,7 +79,6 @@ public class SetAlarm extends Activity {
     //Sound list
     ArrayList<String> soundList;
     ArrayList<String> soundSource;
-    final Ringtone[] mRingtone = new Ringtone[1];
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -131,11 +131,17 @@ public class SetAlarm extends Activity {
         btnSetAlarm.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                saveList(); //DBへの登録
+                String soundName = txtSound.getText().toString();
 
-                //画面遷移
-                Intent intent = new Intent(SetAlarm.this, MainActivity.class);
-                startActivity(intent);
+                if(soundName.equals("Sound Name")){
+                    Toast.makeText(mContext, "You must set a alarm sound", Toast.LENGTH_LONG).show();
+                }else {
+                    saveList(); //DBへの登録
+
+                    //画面遷移
+                    Intent intent = new Intent(SetAlarm.this, MainActivity.class);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -163,7 +169,7 @@ public class SetAlarm extends Activity {
      * @param activity
      * @param context
      */
-    private void choiceSnoozeTime(Activity activity, Context context){
+    private void choiceSnoozeTime(Activity activity, final Context context){
         //Selected snooze time
         final String[] selectTime = new String[1];
         //initializing a new alert dialog
@@ -186,7 +192,6 @@ public class SetAlarm extends Activity {
                 Log.d("Alarm Clock 02 : ", "You checked the " + (which + 1) + " minutes.");
                 selectTime[0] = String.valueOf(which + 1) + " 分";
                 txtSnoozeTime.setText(selectTime[0]);
-
                 dialog.dismiss();
             }
         });
@@ -204,15 +209,18 @@ public class SetAlarm extends Activity {
      */
     private void choiceSound(Activity activity, final Context context){
         final RingtoneManager ringtoneManager = new RingtoneManager(context);
-        final Uri uri = ringtoneManager.getRingtoneUri(ringtoneManager.TYPE_ALARM);
+        final Ringtone[] mRingtone = new Ringtone[1];
+
+        //Get a sound uri and sound title
         Cursor cursor = ringtoneManager.getCursor();
         soundList = new ArrayList<>();
-        soundSource = new ArrayList<>();
-
+        //Get a sound title
         while(cursor.moveToNext()){
-            Log.d("Alarm Clock 02 : ", "Ringtone is " + cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
+            //Log.d("Alarm Clock 02 : ", "Ringtone is " + cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
             soundList.add(cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
         }
+
+        //getSoundList(context);
 
         //Set up alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -232,6 +240,8 @@ public class SetAlarm extends Activity {
                         // Sound a music when click a list item
                         mRingtone[0] = ringtoneManager.getRingtone(which);
                         mRingtone[0].play();
+                        getSoundUri(context);
+                        mSoundUrl = soundSource.get(which);
                     }
                 });
 
@@ -257,6 +267,41 @@ public class SetAlarm extends Activity {
         // Create a dialog
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    /**
+     * It is a test code for get to SoundList
+     * @param context
+     */
+    private void getSoundList(Context context){
+        final RingtoneManager ringtoneManager = new RingtoneManager(context);
+        Cursor cursor = ringtoneManager.getCursor();
+        soundList = new ArrayList<>();
+        //Get a sound title
+        while(cursor.moveToNext()){
+            //Log.d("Alarm Clock 02 : ", "Ringtone is " + cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
+            soundList.add(cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
+        }
+    }
+
+    /**
+     * Get a sound uri
+     * @param context
+     */
+    private void getSoundUri(Context context){
+        final RingtoneManager ringtoneManager = new RingtoneManager(context);
+        Cursor cursor = ringtoneManager.getCursor();
+        soundSource = new ArrayList<>();
+        String uriPrefix;
+        String uriIndex;
+
+        while(cursor.moveToNext()){
+            //Log.d("Alarm Clock 02 : ", "Ringtone is " + cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
+            uriPrefix = cursor.getString(RingtoneManager.URI_COLUMN_INDEX);
+            uriIndex = cursor.getString(RingtoneManager.ID_COLUMN_INDEX);
+            soundSource.add(uriPrefix + uriIndex);
+        }
+        cursor.close();
     }
 
     /**
@@ -314,9 +359,14 @@ public class SetAlarm extends Activity {
         }
         //音声タイトルを取得
         mSound = txtSound.getText().toString();
-        //get sound url type string
-        mSoundUrl = "0";
+        if (mSound == "Sound Name"){
+            Toast.makeText(mContext, " You must select a sound.", Toast.LENGTH_SHORT);
+        }
 
+        //Check to the mSouncUri
+        if (mSoundUrl == null){
+            Toast.makeText(mContext, "You must select a sound.", Toast.LENGTH_SHORT);
+        }
 
         //データベースに書き込み
         db.openDB();

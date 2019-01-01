@@ -126,6 +126,7 @@ public class AlarmDBAdapter {
 
         try{
             db.delete(AlarmTableHelper.DB_TABLE, DBHelper.COL_ID + " = ?", new String[]{position});
+            db.setTransactionSuccessful();
 
         }catch(Exception e){
             e.printStackTrace();
@@ -133,6 +134,29 @@ public class AlarmDBAdapter {
         }finally{
             db.endTransaction();
         }
+    }
+
+    /**
+     * Enable switch
+     * @param position
+     * @param value
+     */
+    public void updateEnable(String position, String value){
+        db.beginTransaction();
+
+        try{
+            ContentValues cv = new ContentValues();
+            cv.put("Enable", value);
+            db.update(AlarmTableHelper.DB_TABLE, cv, DBHelper.COL_ID + " = ?", new String[]{position});
+
+            db.setTransactionSuccessful();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally {
+            db.endTransaction();
+        }
+
     }
 
 }

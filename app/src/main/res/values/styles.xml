@@ -40,6 +40,7 @@
         <item name="colorAccent">@color/colorAppGreen</item>
         <item name="android:textColorSecondary">@color/colorBackDisable</item>
         <item name="android:keyTextColor">@color/colorWhite</item>
+        <item name="android:textColorPrimary">@color/colorWhite</item>
     </style>
 
 
